@@ -111,7 +111,7 @@ class cfb(cipherbase):
 
     def _cipher_procedure(self, input: bytes, iv: bytes) -> bytes:
         output_blocks = []
-        input_blocks = split_bytes(input)
+        input_blocks = split_bytes(input, self.s)
         block_count = len(input_blocks)
         shift_register = None
         for i in range(block_count):
@@ -125,6 +125,13 @@ class cfb(cipherbase):
         return output
 
     def _cipher_procedure_block(self, input: bytes, xor_bytes: bytes) -> tuple:
+        encrypted_bytes = self.cipher.encrypt(xor_bytes)
+        leftmost_bytes, rightmost_bytes = self._get_leftmost_bytes(encrypted_bytes)
+        output = bytes_xor(input, leftmost_bytes)
+        shift_register = b''.join([rightmost_bytes, output])
+        return output, shift_register
+
+    def _cipher_procedure_block_2(self, input: bytes, xor_bytes: bytes) -> tuple:
         encrypted_bytes = self.cipher.encrypt(xor_bytes)
         leftmost_bytes, rightmost_bytes = self._get_leftmost_bytes(encrypted_bytes)
         output = bytes_xor(input, leftmost_bytes)

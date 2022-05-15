@@ -12,13 +12,13 @@ Izpildītās prasības:
 - CFB: Veicot atkodēšanu ir arī jāpārbauda MAC vērtības pareizums.
 - Programma izvada failu ar kodēšanas rezultātu, failu ar MAC (CFB), informāciju, vai MAC ir pareizs (CFB, var attēlot uz ekrāna.)
 - CFB: cipher_procedure_block jāpabeidz, jānotestē vai strādā pareizi uz iekodēšanu un atkodēšanu
+- CFB nuļļu aizpildījumam output failā izmantot x00 vērtības. Tiek pieņemts, ka jebkura sadaļa failā būs 8n gara, bet nesastāvēs no x00 vien.
 
 Vēl neieviestās prasības:
-- CFB nuļļu aizpildījumam output failā izmantot x00 vērtības
 - CFB: Iekodējot virkni, ir jāatgriež arī MAC (var izmantot CMAC/OMAC)
 - CFB: MAC var glabāt jaunā failā vai tai pašā bin failā. - MAC ievietošu jaunā failā un nosaukmam beigās pierakstīšu '_MAC.bin'
 - CFB: Atkodētais fails var saturēt IV un pēc izvēles arī MAC.
-- CFB: Nav pareizs atkodēšanas rezultāts. Pie vainas varētu būt randomizētais IV - neko nedod???
+- CFB: Nav pareizs atkodēšanas rezultāts. Tikai pirmie 8 simboli (puse) tiek pareizi atkodēti no input_05 varianta.
 
 - CBC: Īpašais pēdēja bloka iekodēšana/ attiecīga atkodēšana
 
@@ -27,6 +27,7 @@ Vēl neieviestās prasības:
 
 Pārskatīt:
 - Kas ir jāatgriež CFB iekodēšanai? IV vai key? IV ir nejauši uzģenerētais, bet key ir iekšā input failā.
+- Vai ievades un izvades failiem ir jāsakrīt formātiem?
 
 ---
 Īsumā izpildītais:
@@ -51,7 +52,7 @@ Programmas testi un rezultāti:
 02		OK		?		OK (CBC)
 03		OK		-		OK
 04		OK		-		X
-05		-
+05		-		X
 06		-
 
 ---

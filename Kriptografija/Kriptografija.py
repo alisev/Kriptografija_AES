@@ -8,8 +8,6 @@ import getargs
 import writef
 import mymodes
 
-import strfuncs
-
 import os
 import typing
 

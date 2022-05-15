@@ -14,8 +14,9 @@ def write_file(data: list, mode: str, direction: str, timestamp_format: str = "%
     filetitle = create_filename(timestamp_format)
     extension = ".bin"
     filename = filetitle + extension
+    data_len = len(data)-1 if mode == "CFB" and direction == "E" else len(data)
     with open(filename, "wb") as f:
-        for i in range(len(data)-1):
+        for i in range(data_len):
             clean_line = data[i].rstrip(b' ')
             f.write(clean_line)
             f.write(get_padding())
@@ -40,6 +41,6 @@ def get_timestamp(format: str = "%Y%m%d-%H%M%S") -> str:
     timestamp = now.strftime(format)
     return timestamp
 
-def get_padding(len: int = 8):
-    padding = strfuncs.string_to_bytes("0" * len, len)
+def get_padding(len: int = 8, symbol = "\x00"):
+    padding = strfuncs.string_to_bytes(symbol * len)
     return padding

@@ -27,10 +27,14 @@ def create_initialization_vector(iv_len: int, mode: str) -> bytes:
         iv = os.urandom(iv_len)
     return iv
 
-def solve_arguments(file: str, mode: str, direction: str, mac: str) -> list:
+def solve_arguments(file: str, mode: str, direction: str, mac_file: str) -> list:
     padding = True if mode == "CBC" else False
-    message, key = readf.get_data_from_file(file, direction, padding)
-    mac_b = readf.get_data_from_file(mac, None, False) if mac != None else None
-    iv_len = len(key)
-    iv = create_initialization_vector(iv_len, mode)
-    return message, key, iv, mac_b
+    message, data = readf.get_data_from_file(file, direction, padding)
+    mac = readf.get_data_from_file(mac_file, None, False) if mac_file != None else None
+    if mode == "CFB" and direction == "D":
+        key, iv = data
+    else:
+        key = data[0]
+        iv_len = len(key)
+        iv = create_initialization_vector(iv_len, mode)
+    return message, key, iv, mac
