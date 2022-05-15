@@ -18,5 +18,5 @@ def get_data_from_file(filename: str, direction: str, padding: bool) -> list:
 def read_file_by_line(filename: str) -> list:
     lines = []
     with open(filename) as file:
-        lines = [line.rstrip() for line in file]
+        lines = [line.rstrip().replace(' ', '') for line in file]
     return lines

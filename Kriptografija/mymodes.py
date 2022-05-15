@@ -129,13 +129,7 @@ class cfb(cipherbase):
         leftmost_bytes, rightmost_bytes = self._get_leftmost_bytes(encrypted_bytes)
         output = bytes_xor(input, leftmost_bytes)
         shift_register = b''.join([rightmost_bytes, output])
-        return output, shift_register
-
-    def _cipher_procedure_block_2(self, input: bytes, xor_bytes: bytes) -> tuple:
-        encrypted_bytes = self.cipher.encrypt(xor_bytes)
-        leftmost_bytes, rightmost_bytes = self._get_leftmost_bytes(encrypted_bytes)
-        output = bytes_xor(input, leftmost_bytes)
-        shift_register = b''.join([rightmost_bytes, output])
+        print(shift_register)
         return output, shift_register
 
     def _generate_mac(self, message: bytes, key: bytes) -> bytes: # TODO jāpabeidz
