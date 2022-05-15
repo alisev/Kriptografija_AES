@@ -11,7 +11,7 @@ def argument_parsing() -> dict:
     parser.add_argument('-f','--filename', help = 'Ceļš uz datni, kas satur ziņojumu un atslēgu.', required = True)
     parser.add_argument('-cmode','--chainingmode', help = 'Savirknēšanas režīms. Pieļaujamās vērtības ir "CBC" un "CFB".', required = True)
     parser.add_argument('-d','--direction', help = 'Kodēšanas virziens. Pieļaujamās vērtības ir "E" iekodēšanai un "D" dekodēšanai.', required = True)
-    parser.add_argument('-mac','--mac', help = 'MAC vērtība, ja tiek izmantots CFB režīms. Citādi var atstāt tukšu.', required = False)
+    parser.add_argument('-mac','--mac', help = 'MAC vērtība, ja tiek izmantots CFB režīms. Citādi var atstāt tukšu.', required = False, default = None)
     args = vars(parser.parse_args())
     return args
 
@@ -30,6 +30,7 @@ def create_initialization_vector(iv_len: int, mode: str) -> bytes:
 def solve_arguments(file: str, mode: str, direction: str, mac: str) -> list:
     padding = True if mode == "CBC" else False
     message, key = readf.get_data_from_file(file, direction, padding)
+    mac_b = readf.get_data_from_file(mac, None, False) if mac != None else None
     iv_len = len(key)
     iv = create_initialization_vector(iv_len, mode)
-    return message, key, padding, iv
+    return message, key, iv, mac_b

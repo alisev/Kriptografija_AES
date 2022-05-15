@@ -21,8 +21,5 @@ def ceil(a: int, b: int) -> int:
 
 # -- Konvertē simbolu virkni uz HEX formātu
 def hex_to_bytes(str_text: str) -> bytes:
-    if str_text[0:1] != "0x":
-        str_text = "0x" + str_text
-    int_val = int(str_text, 16)
-    bytes_val = int_val.to_bytes(16, byteorder = 'big')
+    bytes_val = bytes.fromhex(str_text)
     return bytes_val

@@ -11,10 +11,10 @@ Darbs ar programmu:
 Ja gadījumā programma izmet "ModuleNotFoundError" kļūdas paziņojumu, tad trūkstošo moduli var uzinstalēt ar 'pip install <module>' komandu.
 
 1) Programmu palaiž caur komandrindiņu vienlaikus secīgi norādot:
-	-f vai --filename:		Ceļš uz datni, kas satur ziņojumu un atslēgu.
+	-f vai --filename:			Ceļš uz datni, kas satur ziņojumu un atslēgu.
 	-cmode vai --chainingmode:	Savirknēšanas režīms. Pieļaujamās vērtības ir "CBC" un "CFB".
-	-d vai --direction:		Kodēšanas virziens. Pieļaujamās vērtības ir "E" iekodēšanai un "D" dekodēšanai.
-	-mac:				MAC vērtība, ja tiek izmantots CFB režīms. Citādi var atstāt tukšu.
+	-d vai --direction:			Kodēšanas virziens. Pieļaujamās vērtības ir "E" iekodēšanai un "D" dekodēšanai.
+	-mac:						MAC vērtība, ja tiek izmantots CFB režīms. Citādi var atstāt tukšu.
 
 Komandas piemērs:
 	python Kriptografija.py -f ./input/input_01.txt -cmode CBC -d E

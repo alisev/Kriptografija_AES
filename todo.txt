@@ -8,22 +8,25 @@ Izpildītās prasības:
 - Programma nolasa ievadīto simbolu virkni un atslēgu no faila.
 - Rezultāts tiek saglabāts bin failā.
 - Atslēgas tiek uzglabātas HEX formātā.
+- Programmā ievada failu(ar simbolu virkni un atslēgu), failu ar MAC vērtību, chaining mode, darbības virzienu (D vai E)
+- CFB: Veicot atkodēšanu ir arī jāpārbauda MAC vērtības pareizums.
+- Programma izvada failu ar kodēšanas rezultātu, failu ar MAC (CFB), informāciju, vai MAC ir pareizs (CFB, var attēlot uz ekrāna.)
+- CFB: cipher_procedure_block jāpabeidz, jānotestē vai strādā pareizi uz iekodēšanu un atkodēšanu
 
 Vēl neieviestās prasības:
-- CBC: Īpašais pēdēja bloka iekodēšana/ attiecīga atkodēšana
+- CFB nuļļu aizpildījumam output failā izmantot x00 vērtības
 - CFB: Iekodējot virkni, ir jāatgriež arī MAC (var izmantot CMAC/OMAC)
-- CFB: Iekodējot virkni ir jāatgriež arī jauna atslēga.
 - CFB: MAC var glabāt jaunā failā vai tai pašā bin failā. - MAC ievietošu jaunā failā un nosaukmam beigās pierakstīšu '_MAC.bin'
-- CFB: Veicot atkodēšanu ir arī jāpārbauda MAC vērtības pareizums.
 - CFB: Atkodētais fails var saturēt IV un pēc izvēles arī MAC.
+- CFB: Nav pareizs atkodēšanas rezultāts. Pie vainas varētu būt randomizētais IV - neko nedod???
+
+- CBC: Īpašais pēdēja bloka iekodēšana/ attiecīga atkodēšana
+
 - Nodrošināt rīkus kriptogrāfiski spēcīgas atslēgas uzģenerēšanai.
 - you must implement the chaining (both for encryption and MAC computation) and the special processing of the last block(s) by yourself
-- Programmā ievada failu(ar simbolu virkni un atslēgu), failu ar MAC vērtību, chaining mode, darbības virzienu (D vai E)
-- Programma izvada failu ar kodēšanas rezultātu, failu ar MAC (CFB), informāciju, vai MAC ir pareizs (CFB, var attēlot uz ekrāna.)
 
-Vēl darāmais:
-- Testpiemērs, kur ievadītā simbolu virkne > block_length
-- Pārliecināties, vai ir pareizi, ka es split funkcijā sadalu ievadi pa 128.
+Pārskatīt:
+- Kas ir jāatgriež CFB iekodēšanai? IV vai key? IV ir nejauši uzģenerētais, bet key ir iekšā input failā.
 
 ---
 Īsumā izpildītais:
@@ -43,12 +46,12 @@ input_06.txt	Piemērs dekodēšanai, kas iegūts, atkodējot input_02.txt ar AES
 
 Programmas testi un rezultāti:
 
-		CBC		CFB
-01		OK
-02		OK
-03		OK		-
-04		OK		-
-05
-06
+		CBC		CFB		Ar last_block = True
+01		OK		?		OK (CBC)
+02		OK		?		OK (CBC)
+03		OK		-		OK
+04		OK		-		X
+05		-
+06		-
 
 ---
