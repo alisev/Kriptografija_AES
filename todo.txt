@@ -17,11 +17,16 @@ Izpildītās prasības:
 - CFB: MAC var glabāt jaunā failā vai tai pašā bin failā. - MAC ievietošu jaunā failā un nosaukmam beigās pierakstīšu '_MAC.bin'
 - CFB: Atkodētais fails var saturēt IV un pēc izvēles arī MAC.
 - Es gribētu ar cmac saistītās funkcijas ievietot atsevišķā klasē vai failā
+- CFB: Atkodēšanas rezultāts - input_06
+	- Iekodējas pareizi, ja pēdējais bloks sastāv no
+		8, 6, 4, 2
+	- Neiekodējas pareizi, ja ir
+		3, 1
 
 Vēl neieviestās prasības:
-- CFB: Nav pareizs atkodēšanas rezultāts. Tikai pirmie 8 simboli (puse) tiek pareizi atkodēti no input_05 varianta.
 - CBC: Īpašais pēdēja bloka iekodēšana/ attiecīga atkodēšana
 
+- Atgrieztā MAC vērtība nekad nav pareiza. Kas trūkst? Apskatīt mainīgos, kas tiek ielasīti.
 - Nodrošināt rīkus kriptogrāfiski spēcīgas atslēgas uzģenerēšanai.
 - you must implement the chaining (both for encryption and MAC computation) and the special processing of the last block(s) by yourself
 
@@ -33,7 +38,7 @@ Pārskatīt:
 ---
 Īsumā izpildītais:
 - CBC iekodēšana un atkodēšana
-
+- CFB iekodēšana un atkodēšana
 --
 Iekļautie piemēri mapē input:
 

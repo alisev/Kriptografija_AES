@@ -176,7 +176,7 @@ class cfb(cipherbase):
         super().__init__(cipher, last_block) 
 
     def decrypt(self, ciphertext: bytes, iv: bytes, mac: bytes, key: bytes) -> list:
-        plaintext = self._cipher_procedure(ciphertext, iv)
+        plaintext = self._cipher_procedure(ciphertext, iv, "D")
         if self.cmac.is_mac_good(mac, plaintext, key):
             print("MAC vērtība ir pareiza.")
         else:
@@ -184,33 +184,37 @@ class cfb(cipherbase):
         return [plaintext]
 
     def encrypt(self, plaintext: bytes, iv: bytes, key: bytes) -> list:
-        ciphertext = self._cipher_procedure(plaintext, iv)
+        ciphertext = self._cipher_procedure(plaintext, iv, "E")
         plaintext_blocks = split_bytes(plaintext)
         mac = self.cmac.generate_mac(plaintext, key)
         return ciphertext, iv, mac
 
-    def _cipher_procedure(self, input: bytes, iv: bytes) -> bytes:
-        """ Veic ziņojuma iekodēšanu un atkodēšanu. """
+    def _cipher_procedure(self, input: bytes, iv: bytes, direction: str) -> bytes:
+        """ Veic ziņojuma iekodēšanu un atkodēšanu.
+        Ja pēdējā blokā simbolu skaits ir nepāra, tās beigās tiek pievienota viena atstarpe. """
         output_blocks = []
         input_blocks = split_bytes(input, self.s)
+        if len(input_blocks[-1]) % 2 == 1:
+            input_blocks[-1] = input_blocks[-1] + b" "
         block_count = len(input_blocks)
         shift_register = None
         for i in range(block_count):
             output_block = None
             if self._handle_mid_block(i, block_count - 1):
-                output_block, shift_register = self._cipher_procedure_block(input_blocks[i], shift_register)
+                output_block, shift_register = self._cipher_procedure_block(input_blocks[i], shift_register, direction)
             elif self._handle_first_block(i):
-                output_block, shift_register = self._cipher_procedure_block(input_blocks[i], iv)
+                output_block, shift_register = self._cipher_procedure_block(input_blocks[i], iv, direction)
             output_blocks.append(output_block)
             output = b''.join(output_blocks)
         return output
 
-    def _cipher_procedure_block(self, input: bytes, xor_bytes: bytes) -> tuple:
+    def _cipher_procedure_block(self, input: bytes, xor_bytes: bytes, direction: str) -> tuple:
         """ Iekodē/Atkodē bloku. """
         encrypted_bytes = self.cipher.encrypt(xor_bytes)
         leftmost_bytes, rightmost_bytes = self._get_leftmost_bytes(encrypted_bytes)
         output = bytes_xor(input, leftmost_bytes)
-        shift_register = b''.join([rightmost_bytes, output])
+        shift_register_right_side = output if direction == "E" else input
+        shift_register = b''.join([rightmost_bytes, shift_register_right_side])
         return output, shift_register
 
     def _get_leftmost_bytes(self, b_str: bytes) -> tuple:

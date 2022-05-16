@@ -16,7 +16,7 @@ def create_cipher(key: bytes) -> EcbMode:
     return cipher
 
 if __name__ == "__main__":
-    file, mode, direction, mac_file = getargs.get_argument_values() # TODO mac ielasa no faila atsevišķa
+    file, mode, direction, mac_file = getargs.get_argument_values()
     message, key, iv, mac = getargs.solve_arguments(file, mode, direction, mac_file)
     cipher = create_cipher(key)
 
@@ -27,9 +27,9 @@ if __name__ == "__main__":
     if mode == "CBC":
         cbc = mymodes.cbc(cipher, alt_last_block)
         if direction == "E":
-            result.append(cbc.encrypt(message, iv))
+            result = cbc.encrypt(message, iv)
         else:
-            result.append(cbc.decrypt(message, iv))
+            result = cbc.decrypt(message, iv)
     else:
         cfb = mymodes.cfb(cipher, alt_last_block)
         if direction == "E":

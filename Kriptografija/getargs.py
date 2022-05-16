@@ -22,7 +22,7 @@ def get_argument_values() -> list:
 # -- Darbības, kas tiek veiktas, lai izgūtu svarīgāko informāciju no argumentiem
 def create_initialization_vector(iv_len: int, mode: str) -> bytes:
     if mode == "CBC":
-        iv = strfuncs.string_to_bytes("0" * iv_len, iv_len)
+        iv = strfuncs.string_to_bytes("\x00" * iv_len, iv_len)
     else:
         iv = os.urandom(iv_len)
     return iv
