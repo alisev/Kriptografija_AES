@@ -30,7 +30,7 @@ def create_initialization_vector(iv_len: int, mode: str) -> bytes:
 def solve_arguments(file: str, mode: str, direction: str, mac_file: str) -> list:
     padding = True if mode == "CBC" else False
     message, data = readf.get_data_from_file(file, direction, padding)
-    mac = readf.get_data_from_file(mac_file, None, False) if mac_file != None else None
+    mac = readf.get_data_from_file(mac_file, None, False)[0] if mac_file != None else None
     if mode == "CFB" and direction == "D":
         key, iv = data
     else:

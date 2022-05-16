@@ -47,7 +47,8 @@ class cmac(object):
 
     def is_mac_good(self, mac: bytes, plaintext: bytes, key: bytes) -> bool:
         """ Pārbauda, vai padotā MAC vērtība sakrīt atkodētā ziņojuma MAC. """
-        if mac == self.generate_mac(plaintext, key): 
+        plaintext_mac = self.generate_mac(plaintext, key)
+        if mac == plaintext_mac:
             return True
         return False
 
@@ -176,7 +177,7 @@ class cfb(cipherbase):
         super().__init__(cipher, last_block) 
 
     def decrypt(self, ciphertext: bytes, iv: bytes, mac: bytes, key: bytes) -> list:
-        plaintext = self._cipher_procedure(ciphertext, iv, "D")
+        plaintext = self._cipher_procedure(ciphertext, iv, "D").rstrip()
         if self.cmac.is_mac_good(mac, plaintext, key):
             print("MAC vērtība ir pareiza.")
         else:
