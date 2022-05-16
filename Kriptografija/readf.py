@@ -6,7 +6,8 @@ import strfuncs
 def get_data_from_file(filename: str, direction: str, padding: bool) -> list:
     data = []
     lines = read_file_by_line(filename)
-    key_len = len(strfuncs.hex_to_bytes(lines[1]))
+    if direction != None:
+        key_len = len(strfuncs.hex_to_bytes(lines[1]))
     for i in range(len(lines)):
         if i == 0 and direction == "E":
             data.append(strfuncs.string_to_bytes(lines[i], key_len, padding))

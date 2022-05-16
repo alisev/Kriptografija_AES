@@ -23,3 +23,7 @@ def ceil(a: int, b: int) -> int:
 def hex_to_bytes(str_text: str) -> bytes:
     bytes_val = bytes.fromhex(str_text)
     return bytes_val
+
+# -- Sadala bytes virkni blokos.
+def split_bytes(msg: bytes, step: int = 16) -> list:
+    return [msg[i : i+step] for i in range(0, len(msg), step)]

@@ -11,24 +11,104 @@ def bytes_xor(a: bytes, b: bytes) -> bytes:
 def split_bytes(msg: bytes, step: int = 16) -> list:
     return [msg[i : i+step] for i in range(0, len(msg), step)]
 
+# -- CMAC klase
+class cmac(object):
+    def __init__(self, cipher):
+        self.cipher = cipher
+
+    def generate_mac(self, message: bytes, key: bytes) -> bytes: # TODO jāpabeidz, var būt vajadzīgs padding
+        _zero = "0x" + "0" * 32
+        _Bsize = 16
+
+        m = split_bytes(message, _Bsize)
+        message_size = len(message)
+        r = len(m[-1])
+        is_last_block_complete = False
+
+        k1, k2 = self._generate_subkey(key)
+        n = len(m) # TODO =ceil(message_size/_Bsize)
+        if n == 0:
+            n = 1
+        elif message_size %_Bsize == 0:
+            is_last_block_complete = True
+        
+        if is_last_block_complete:
+            m_last = bytes_xor(m[-1], k1)
+        else:
+            m_last = bytes_xor(self._padding(m[1], r), k2)
+        x = _zero
+        for i in range(n):
+            y = m[i]
+            x = self.cipher.encrypt(y)
+        y = bytes_xor(m_last, x)
+        mac = self.cipher.encrypt(y)
+        return mac
+
+    def is_mac_good(self, mac: bytes, plaintext: bytes, key: bytes) -> bool:
+        """ Pārbauda, vai padotā MAC vērtība sakrīt atkodētā ziņojuma MAC. """
+        if mac == self.generate_mac(plaintext, key): 
+            return True
+        return False
+
+    def _generate_subkey(self, key: bytes) -> tuple:
+        _zero = strfuncs.hex_to_bytes("0" * 32)
+        _rb = strfuncs.hex_to_bytes("0" * 30 + "87")
+        k1 = None
+        k2 = None
+        L = self.cipher.encrypt(_zero)
+        L_int = int.from_bytes(L, byteorder = "big")
+        if self._msb(L[0]) == False:
+            temp_k1 = L_int << 1
+        else:
+            temp_k1 = bytes_xor((L_int << 1), _rb)
+        k1 = temp_k1.to_bytes(32, byteorder = "big")
+        if self._msb(k1[0]) == False:
+            temp_k2 = temp_k1 << 1
+        else:
+            temp_k2 = bytes_xor((temp_k1 << 1), _rb)
+        k2 = temp_k2.to_bytes(32, byteorder = "big")
+        return k1, k2
+
+    def _msb(self, byte: bytes) -> bool:
+        bin_str = bin(byte)
+        if bin_str == 1:
+            return True
+        return False
+
+    def _padding(block: bytes, r: int) -> bytes:
+        i = 128 - 8 * r - 1
+        s = "1" + "0" * i
+        bytes_app = int(s, 2).to_bytes((len(s) + 7) // 8, byteorder='big')
+        padded_block = block + bytes_app
+        print(padded_block)
+        return padded_block
+
 # -- Iekodēšanas un dekodēšanas funkcijas
 # -- Vecāka klase
 class cipherbase(object):
     def __init__(self, cipher: EcbMode, last_block: bool):
+        """
+        Vecāka klase CBC un CFB iekodēšanai. Satur kopīgās metodes. 
+        cipher: Šifrētājs, kas veic iekodēšanu/atkodēšanu. 
+        last_block: Karogs, kas nosaka, vai pēdējais bloks tiks atsevišķi iekodēts/atkodēts.
+        """
         self.cipher = cipher
         self.alt_last_block = last_block
 
     def _handle_first_block(self, i: int) -> bool:
+        """ Nosaka, vai ir jāapstrādā ziņojuma pirmais bloks. """
         if i == 0:
             return True
         return False
 
     def _handle_mid_block(self, i: int, last: int) -> bool:
+        """ Vidus bloku apstrādei. """
         if (self.alt_last_block == True and i == last) or i == 0:
             return False
         return True
 
     def _handle_last_block(self, i: int, last: int) -> bool:
+        """ Pēdējā bloka apstrādei. """
         if i == last and self.alt_last_block == True:
             return True
         return False
@@ -94,11 +174,12 @@ class cbc(cipherbase):
 class cfb(cipherbase):
     def __init__(self, cipher: EcbMode, last_block: bool, s: int = 8):
         self.s = s
+        self.cmac = cmac(cipher)
         super().__init__(cipher, last_block) 
 
     def decrypt(self, ciphertext: bytes, iv: bytes, mac: bytes, key: bytes) -> list:
         plaintext = self._cipher_procedure(ciphertext, iv)
-        if self._is_mac_good(mac, plaintext, key):
+        if self.cmac.is_mac_good(mac, plaintext, key):
             print("MAC vērtība ir pareiza.")
         else:
             print("MAC vērtība nav pareiza.")
@@ -106,10 +187,12 @@ class cfb(cipherbase):
 
     def encrypt(self, plaintext: bytes, iv: bytes, key: bytes) -> list:
         ciphertext = self._cipher_procedure(plaintext, iv)
-        mac = self._generate_mac(plaintext, key)
+        plaintext_blocks = split_bytes(plaintext)
+        mac = self.cmac.generate_mac(plaintext, key)
         return ciphertext, iv, mac
 
     def _cipher_procedure(self, input: bytes, iv: bytes) -> bytes:
+        """ Veic ziņojuma iekodēšanu un atkodēšanu. """
         output_blocks = []
         input_blocks = split_bytes(input, self.s)
         block_count = len(input_blocks)
@@ -125,36 +208,14 @@ class cfb(cipherbase):
         return output
 
     def _cipher_procedure_block(self, input: bytes, xor_bytes: bytes) -> tuple:
+        """ Iekodē/Atkodē bloku. """
         encrypted_bytes = self.cipher.encrypt(xor_bytes)
         leftmost_bytes, rightmost_bytes = self._get_leftmost_bytes(encrypted_bytes)
         output = bytes_xor(input, leftmost_bytes)
         shift_register = b''.join([rightmost_bytes, output])
-        print(shift_register)
         return output, shift_register
 
-    def _generate_mac(self, message: bytes, key: bytes) -> bytes: # TODO jāpabeidz
-        """
-        temp_val = strfuncs.string_to_bytes("0" * len(message))
-        temp_k = self.cipher.encrypt(temp_val)
-        #print(temp_k)
-
-        mac_vals = []
-        msg_blocks = split_bytes(message)
-        block_count = len(msg_blocks)
-        for i in range(block_count):
-            if self._handle_mid_block(i, block_count - 1):
-                pass
-            elif self._handle_first_block(i):
-                pass
-            else:
-                pass
-        """
-        return b'TEST TODO'
-
     def _get_leftmost_bytes(self, b_str: bytes) -> tuple:
+        """ Sadala ievadīto virkni kreisajā un labajā pusē. Kreisās puses garums ir atkarīgs no self.s. """
         return b_str[ : self.s], b_str[self.s : ]
 
-    def _is_mac_good(self, mac: bytes, plaintext: bytes, key: bytes) -> bool:
-        if mac == self._generate_mac(plaintext, key): 
-            return True
-        return False

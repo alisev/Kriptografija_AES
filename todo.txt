@@ -13,17 +13,18 @@ Izpildītās prasības:
 - Programma izvada failu ar kodēšanas rezultātu, failu ar MAC (CFB), informāciju, vai MAC ir pareizs (CFB, var attēlot uz ekrāna.)
 - CFB: cipher_procedure_block jāpabeidz, jānotestē vai strādā pareizi uz iekodēšanu un atkodēšanu
 - CFB nuļļu aizpildījumam output failā izmantot x00 vērtības. Tiek pieņemts, ka jebkura sadaļa failā būs 8n gara, bet nesastāvēs no x00 vien.
-
-Vēl neieviestās prasības:
 - CFB: Iekodējot virkni, ir jāatgriež arī MAC (var izmantot CMAC/OMAC)
 - CFB: MAC var glabāt jaunā failā vai tai pašā bin failā. - MAC ievietošu jaunā failā un nosaukmam beigās pierakstīšu '_MAC.bin'
 - CFB: Atkodētais fails var saturēt IV un pēc izvēles arī MAC.
-- CFB: Nav pareizs atkodēšanas rezultāts. Tikai pirmie 8 simboli (puse) tiek pareizi atkodēti no input_05 varianta.
+- Es gribētu ar cmac saistītās funkcijas ievietot atsevišķā klasē vai failā
 
+Vēl neieviestās prasības:
+- CFB: Nav pareizs atkodēšanas rezultāts. Tikai pirmie 8 simboli (puse) tiek pareizi atkodēti no input_05 varianta.
 - CBC: Īpašais pēdēja bloka iekodēšana/ attiecīga atkodēšana
 
 - Nodrošināt rīkus kriptogrāfiski spēcīgas atslēgas uzģenerēšanai.
 - you must implement the chaining (both for encryption and MAC computation) and the special processing of the last block(s) by yourself
+
 
 Pārskatīt:
 - Kas ir jāatgriež CFB iekodēšanai? IV vai key? IV ir nejauši uzģenerētais, bet key ir iekšā input failā.

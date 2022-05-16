@@ -18,6 +18,7 @@ Ja gadījumā programma izmet "ModuleNotFoundError" kļūdas paziņojumu, tad tr
 
 Komandas piemērs:
 	python Kriptografija.py -f ./input/input_01.txt -cmode CBC -d E
+	python Kriptografija.py -f ./input/input_05.txt -cmode CFB -d D -mac ./input/input_05_MAC.txt
 
 2) Pēc uzdevuma izpildīšanas programma uz ekrāna parādīs rezultātu un saglabās informāciju binārā datnē, kas ir atrodams programmas mapē 'MD1/output'.
 Ja tika izmantota CFB savirknēšanas režīms, tad tiek saglabāts arī .bin fails ar MAC vērtību. MAC vērtības faila nosaukums ir iegūts, atbilstošajam rezultāta faila nosaukumam pievienojot beigās '_MAC'. Piemēram:
