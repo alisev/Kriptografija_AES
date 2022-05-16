@@ -15,29 +15,30 @@ def split_bytes(msg: bytes, step: int = 16) -> list:
 class cmac(object):
     def __init__(self, cipher):
         self.cipher = cipher
+        self._zero = strfuncs.hex_to_bytes("0" * 32)
+        self._rb = strfuncs.hex_to_bytes("0" * 30 + "87")
+        self._Bsize = 16
 
-    def generate_mac(self, message: bytes, key: bytes) -> bytes: # TODO jāpabeidz, var būt vajadzīgs padding
-        _zero = "0x" + "0" * 32
-        _Bsize = 16
-
-        m = split_bytes(message, _Bsize)
+    def generate_mac(self, message: bytes, key: bytes) -> bytes:
+        """ Uzģenerē MAC vērtību. """
+        m = split_bytes(message, self._Bsize)
         message_size = len(message)
         r = len(m[-1])
         is_last_block_complete = False
 
         k1, k2 = self._generate_subkey(key)
-        n = len(m) # TODO =ceil(message_size/_Bsize)
+        n = len(m) # = ceil(message_size/_Bsize)
         if n == 0:
             n = 1
-        elif message_size %_Bsize == 0:
+        elif message_size % self._Bsize == 0:
             is_last_block_complete = True
         
         if is_last_block_complete:
             m_last = bytes_xor(m[-1], k1)
         else:
-            m_last = bytes_xor(self._padding(m[1], r), k2)
-        x = _zero
-        for i in range(n):
+            m_last = bytes_xor(self._padding(m[-1], r), k2)
+        x = self._zero
+        for i in range(n-1):
             y = m[i]
             x = self.cipher.encrypt(y)
         y = bytes_xor(m_last, x)
@@ -51,21 +52,19 @@ class cmac(object):
         return False
 
     def _generate_subkey(self, key: bytes) -> tuple:
-        _zero = strfuncs.hex_to_bytes("0" * 32)
-        _rb = strfuncs.hex_to_bytes("0" * 30 + "87")
         k1 = None
         k2 = None
-        L = self.cipher.encrypt(_zero)
+        L = self.cipher.encrypt(self._zero)
         L_int = int.from_bytes(L, byteorder = "big")
         if self._msb(L[0]) == False:
             temp_k1 = L_int << 1
         else:
-            temp_k1 = bytes_xor((L_int << 1), _rb)
+            temp_k1 = bytes_xor((L_int << 1), self._rb)
         k1 = temp_k1.to_bytes(32, byteorder = "big")
         if self._msb(k1[0]) == False:
             temp_k2 = temp_k1 << 1
         else:
-            temp_k2 = bytes_xor((temp_k1 << 1), _rb)
+            temp_k2 = bytes_xor((temp_k1 << 1), self._rb)
         k2 = temp_k2.to_bytes(32, byteorder = "big")
         return k1, k2
 
@@ -75,12 +74,11 @@ class cmac(object):
             return True
         return False
 
-    def _padding(block: bytes, r: int) -> bytes:
+    def _padding(self, block: bytes, r: int) -> bytes:
         i = 128 - 8 * r - 1
         s = "1" + "0" * i
         bytes_app = int(s, 2).to_bytes((len(s) + 7) // 8, byteorder='big')
         padded_block = block + bytes_app
-        print(padded_block)
         return padded_block
 
 # -- Iekodēšanas un dekodēšanas funkcijas
