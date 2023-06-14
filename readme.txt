@@ -11,10 +11,10 @@ Darbs ar programmu:
 0) Programmas palaišanai ir nepieciešams, lai uz datora būtu uzinstalēts Python 3.10. Iespējams, ka derēs arī citas Python 3 versijas, bet par to negalvoju. Gadījumā, ja programma izmet "ModuleNotFoundError" kļūdas paziņojumu, tad trūkstošo moduli var uzinstalēt ar 'pip install <module>' komandu.
 
 1) Programmu palaiž caur komandrindiņu vienlaikus secīgi norādot:
-	-f vai --filename:			Ceļš uz datni, kas satur ziņojumu un atslēgu.
+	-f vai --filename:		Ceļš uz datni, kas satur ziņojumu un atslēgu.
 	-cmode vai --chainingmode:	Savirknēšanas režīms. Pieļaujamās vērtības ir "CBC" un "CFB".
-	-d vai --direction:			Kodēšanas virziens. Pieļaujamās vērtības ir "E" iekodēšanai un "D" dekodēšanai.
-	-mac:						MAC vērtība, ja tiek izmantots CFB režīms. Citādi var atstāt tukšu.
+	-d vai --direction:		Kodēšanas virziens. Pieļaujamās vērtības ir "E" iekodēšanai un "D" dekodēšanai.
+	-mac:				MAC vērtība, ja tiek izmantots CFB režīms. Citādi var atstāt tukšu.
 
 Komandu piemēri:
 	python Kriptografija.py -f ./input/input_01.txt -cmode CBC -d E
@@ -28,13 +28,11 @@ Ja tika izmantota iekodēšana ar CFB savirknēšanas režīmu, tad izvadfailā 
 ----
 Iekļautie piemēri mapē input:
 
-		input_01.txt	Piemērs iekodēšanai, kur nav nepieciešams padding.
-		input_02.txt	Piemērs iekodēšanai, kur padding var būt nepieciešams.
+	input_01.txt	Piemērs iekodēšanai, kur nav nepieciešams padding.
+	input_02.txt	Piemērs iekodēšanai, kur padding var būt nepieciešams.
 
-		input_03.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_01.txt ar AES un CBC.
-		input_04.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_02.txt ar AES un CBC.
+	input_03.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_01.txt ar AES un CBC.
+	input_04.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_02.txt ar AES un CBC.
 
-		input_05.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_01.txt ar AES un CFB.
-	input_05_MAC.txt
-		input_06.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_02.txt ar AES un CFB.
-	input_06_MAC.txt
+	input_05.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_01.txt ar AES un CFB.
+	input_06.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_02.txt ar AES un CFB.
