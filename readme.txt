@@ -1,3 +1,5 @@
+Programma ziņojumu iekodēšanai un atkodēšanai, izmantojot AES algoritmu ar CBC vai CFB režīmu.
+
 Programma ir uzrakstīta valodā Python 3.6 un izmanto vairākas bibliotēkas tās darbības nodrošināšanai:
 	- Crypto	Pycryptodome bibliotēka. Nodrošina iekodēšanu un atkodēšanu ar AES.
 	- argparse	Ļauj ievadīt programmā parametrus no komandrindiņas.
