@@ -27,9 +27,9 @@ if __name__ == "__main__":
     if mode == "CBC":
         cbc = mymodes.cbc(cipher, alt_last_block)
         if direction == "E":
-            result = cbc.encrypt(message, iv)
+            result = [cbc.encrypt(message, iv)]
         else:
-            result = cbc.decrypt(message, iv)
+            result = [cbc.decrypt(message, iv)]
     else:
         cfb = mymodes.cfb(cipher, alt_last_block)
         if direction == "E":

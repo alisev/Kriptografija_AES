@@ -21,6 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="generate_key.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Kriptografija.py" />
     <Compile Include="getargs.py">
       <SubType>Code</SubType>
