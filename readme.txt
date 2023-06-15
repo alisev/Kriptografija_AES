@@ -35,6 +35,23 @@ Iekļautie piemēri mapē input:
 
 	input_03.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_01.txt ar AES un CBC.
 	input_04.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_02.txt ar AES un CBC.
-
+	
 	input_05.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_01.txt ar AES un CFB.
+	input_05_MAC.txt
 	input_06.txt	Piemērs dekodēšanai, kas iegūts, iekodējot input_02.txt ar AES un CFB.
+	input_06_MAC.txt
+	
+----
+Par generate_key.py:
+
+Tā ir programma atslēgu ģenerēšanai. To palaiž caur komandrindiņu un lietotājs var norādīt neobligātus argumentus:
+	-l vai -length - Atslēgas garums baitos. Pieļaujamās vērtības: 16, 24, 32. Noklusējuma vērtība ir 16.
+	-p vai -passphrase - Simbolu virkne, kas tiek pielietota atslēgas ģenerēšanā. Ja nav norādīta, tad noklusējuma vērtība ir tukša simbolu virkne un programma uzģenerē atslēgu ar os.urandom() funkciju.
+
+Daži derīgi komandu piemēri:
+	python generate_key.py
+	python generate_key.py -l 32
+	python generate_key.py -p "Hello, World!"
+	python generate_key.py -l 32 -p "Hello, World!"
+
+Uzģenerētā atslēga tiek saglabāta .txt failā mapē output un to nosaukumi sākas ar "KEY_". Vērtības tiek uzglabātas heksadecimālā formāta un tās var iekopēt ievades failā tālākai izmantošanai.
